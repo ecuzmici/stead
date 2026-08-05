@@ -51,7 +51,7 @@ swappable; the format is the stable interface.
 ## 60-second quickstart
 
 ```bash
-npm install -g @stead/cli    # installs the `stead` command
+npm install -g stead-cli    # installs the `stead` command
 
 # or from source:
 git clone https://github.com/ecuzmici/stead && cd stead

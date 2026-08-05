@@ -31,6 +31,9 @@ is one implementation of the format, which is the actual product).
 Days of latency, uncertain outcome; can still be done later on top of B.
 
 ## Decision
-Signed by: ecuzmici (option selected interactively in the bootstrap session)
+Signed by: ecuzmici (options selected interactively in the bootstrap session)
 Date: 2026-08-05
-Chosen option: B
+Chosen option: B, which then failed — the `stead` org/scope name was
+already taken on npm (scopes share the user/org namespace). Final
+choice, also signed interactively: bare name **`stead-cli`** (unscoped,
+passes the similarity filter; the installed command remains `stead`).
