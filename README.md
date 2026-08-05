@@ -51,6 +51,9 @@ swappable; the format is the stable interface.
 ## 60-second quickstart
 
 ```bash
+npm install -g @stead/cli    # installs the `stead` command
+
+# or from source:
 git clone https://github.com/ecuzmici/stead && cd stead
 npm test                     # the CLI's own test suite
 node bin/stead.js check      # recompute Stead's own guarantees

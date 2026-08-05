@@ -1,5 +1,5 @@
 {
-  "name": "stead",
+  "name": "@stead/cli",
   "version": "0.1.0",
   "description": "Software built in your stead. Guarantees that hold.",
   "license": "MIT",
