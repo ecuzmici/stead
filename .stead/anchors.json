@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "anchors": {
+    "S1": {
+      "kind": "check",
+      "tier": "SAMPLED",
+      "cmd": "node test/determinism.test.js"
+    },
+    "S2": {
+      "kind": "check",
+      "tier": "ENFORCED",
+      "cmd": "node test/no-network.test.js"
+    },
+    "S3": {
+      "kind": "check",
+      "tier": "SAMPLED",
+      "cmd": "node test/tamper.test.js"
+    },
+    "S4": {
+      "kind": "check",
+      "tier": "SAMPLED",
+      "cmd": "node test/parse.test.js"
+    }
+  }
+}

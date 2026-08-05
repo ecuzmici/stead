@@ -1,0 +1,66 @@
+name: stead
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # The attestor: recompute every guarantee's status from evidence.
+      - name: stead check
+        run: node bin/stead.js check
+      # Dafny cheat-guard: no assumes/axioms/verify-false under src/.
+      # Harmless no-op in repos without a src/ tree.
+      - name: proof cheat-guard
+        run: |
+          if [ -d src ]; then
+            if grep -rnE 'assume|\{:axiom\}|\{:verify false\}' src/; then
+              echo "::error::evidence-weakening construct under src/"
+              exit 1
+            fi
+          fi
+
+  # Guarantee edits require CODEOWNERS review. Full enforcement also
+  # needs branch protection with "require review from Code Owners"
+  # enabled; this job fails the PR until an approving review from the
+  # code owner exists.
+  guarantees-gate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: require CODEOWNERS review for guarantee changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          changed=$(git diff --name-only "$BASE"...HEAD -- GUARANTEES.md FORMAT.md)
+          if [ -z "$changed" ]; then
+            echo "no guarantee-layer changes"; exit 0
+          fi
+          echo "guarantee-layer files changed:"; echo "$changed"
+          owners=$(grep -oE '@[A-Za-z0-9-]+' .github/CODEOWNERS | sort -u | tr -d '@')
+          approved=$(curl -sf -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$REPO/pulls/$PR/reviews?per_page=100" |
+            node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>{const r=JSON.parse(d);const s={};for(const v of r)s[v.user.login]=v.state;console.log(Object.entries(s).filter(([,x])=>x==="APPROVED").map(([u])=>u).join("\n"))})')
+          for o in $owners; do
+            if echo "$approved" | grep -qx "$o"; then
+              echo "approved by code owner @$o"; exit 0
+            fi
+          done
+          echo "::error::GUARANTEES.md/FORMAT.md changed without an approving review from a code owner"
+          exit 1

@@ -1,0 +1,4 @@
+# Removing or weakening a guarantee is the high-friction event.
+# These two files define and carry the human-layer contract.
+/GUARANTEES.md @ecuzmici
+/FORMAT.md     @ecuzmici

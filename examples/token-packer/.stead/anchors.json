@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "anchors": {
+    "E2": {
+      "kind": "check",
+      "tier": "SAMPLED",
+      "cmd": "python3 test_packer.py"
+    }
+  }
+}
