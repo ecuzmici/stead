@@ -2,6 +2,10 @@ name: publish
 
 on:
   workflow_dispatch:
+    inputs:
+      otp:
+        description: "npm one-time password (from your authenticator; leave empty if the token bypasses 2FA)"
+        required: false
 
 jobs:
   npm-publish:
@@ -17,6 +21,7 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: npm test
       - run: node bin/stead.js check
-      - run: npm publish --provenance --access public
+      - run: npm publish --provenance --access public ${OTP:+--otp="$OTP"}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          OTP: ${{ inputs.otp }}
